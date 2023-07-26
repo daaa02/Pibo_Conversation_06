@@ -53,8 +53,6 @@ class Etiquette():
                 
         
     def Cough(self):
-        gss.write_sheet(name=self.user_name, today=today_start, activities=filename)
-        
         cm.tts(bhv="do_suggestion_L", string=f"2번 카드를 파이보에게 보여줘!")
         
         while True:         
