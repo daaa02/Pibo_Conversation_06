@@ -9,7 +9,6 @@ from datetime import datetime
 sys.path.append('/home/pi')
 from schedule_update import UpdateSchedule
 from Pibo_Package_06.Pibo_Conversation.data.text_to_speech import TextToSpeech, text_to_speech
-from Pibo_Package_06.Pibo_Conversation.data.upload_test import drive_upload
 
 from openpibo.audio import Audio
 from openpibo.motion import Motion
@@ -50,23 +49,19 @@ class RunSchedule():
         print('완료한 활동 개수:', self.completion)
 
         # 고정된 스케줄로 진행(~3일차)
-        
-        if self.completion == 0:
-            self.act = f'Pibo_Conversation/src/greeting.py'
-        
-        if 1 <= self.completion < 9:
+        if self.completion < 8:
             # 완료한 활동 개수가 짝수면 놀이, 홀수면 대화
             # fix = {0:'Pibo_Play/src/Mus/mus_11.py', 1:'Pibo_Conversation/src/Roleplay/02_strong.py',#'Pibo_Conversation/src/Roleplay/09_rolemodel.py', 
             #        2:'Pibo_Play/src/Cog/cog_1.py', 3:'Pibo_Conversation/src/Fairytale/04_wolf.py', 
             #        4:'Pibo_Play/src/Soc/soc_6.py', 5:'Pibo_Conversation/src/Etiquette/03_cough.py', 
             #        6:'Pibo_Play/src/Com/com_4.py', 7:'Pibo_Conversation/src/Solution/01_badword.py'}            
-            fix = {1:'Pibo_Conversation/src/Fairytale/19_shepherd.py', 2:'Pibo_Conversation/src/Roleplay/02_strong.py',
-                   3:'Pibo_Conversation/src/Solution/01_badword.py', 4:'Pibo_Play/src/Com/com_4.py', 5:'Pibo_Play/src/Soc/soc_6.py',
-                   6:'Pibo_Conversation/src/Etiquette/03_cough.py', 7:'Pibo_Play/src/Cog/cog_1.py', 8:'Pibo_Play/src/Mus/mus_11.py'}   
+            fix = {0:'Pibo_Conversation/src/Fairytale/19_shepherd.py', 1:'Pibo_Conversation/src/Roleplay/02_strong.py',
+                   2:'Pibo_Conversation/src/Solution/01_badword.py', 3:'Pibo_Play/src/Com/com_4.py', 4:'Pibo_Play/src/Soc/soc_6.py',
+                   5:'Pibo_Conversation/src/Etiquette/03_cough.py', 6:'Pibo_Play/src/Cog/cog_1.py', 7:'Pibo_Play/src/Mus/mus_11.py'}   
             self.act = fix.get(self.completion)
         
         # 선호도 계산해서 활동 스케줄 결정(4일차~)
-        if 9 <= self.completion < 11 or self.completion > 11 :
+        if self.completion >= 8:
             for i in range(0, len(data2)):              # 점수 값이 string 형태로 들어있어서 flaot로 변환
                 for j in range(0, 4):
                     data2[i][j] = float(data2[i][j])
@@ -121,8 +116,8 @@ class RunSchedule():
                     self.act = f'Pibo_Conversation/src/Roleplay/{rand}.py'
         
         # 마지막 활동은 헤어짐 시나리오: 얘 끝나고 밑에 다음에 ~ 안나오게 해야함
-        if self.completion == 11:
-            self.act = f'Pibo_Conversation/src/goodbye.py'           
+        #if self.completion == 10:
+            #self.act = f'Pibo_Conversation/src/goodbye.py'           
         
         folder = "/home/pi/UserData"
         today = datetime.now().strftime('%m%d_%H%M')
@@ -132,16 +127,9 @@ class RunSchedule():
         try:
             # out = subprocess.run([f'python3 {self.path}/{self.act}'], shell=True)
             # subprocess.run([f'python3 {self.path}/{self.act}'], shell=True)
-            f = open(f'{folder}/{today}.txt','wb')        
+            os.system(f'python3 {self.path}/{self.act}')
             
-            # os.system(f'python3 {self.path}/{self.act}')
-            out = subprocess.check_output([f'python3 {self.path}/{self.act}'], shell=True)
-            f.write(out)
-            f.close()
-            # drive_upload(folder, f'{today}.txt')
-            
-            
-            if self.completion >= 11:
+            if self.completion >= 10:
                 pass
             
             else:
@@ -163,9 +151,9 @@ class RunSchedule():
             #     subprocess.run(['python3 /home/pi/Pibo_Package_06/Pibo_Conversation/src/start_touch.py'], shell=True)
         
         except Exception as ex:
-            with open('/home/pi/pibo_errmsg.txt', 'wb') as f:
+            with open('/home/pi/pibo_errmsg', 'w') as f:
                 f.write(f'[{time.ctime()}]\n{ex}')
-                f.close()
+                
         
         
 
