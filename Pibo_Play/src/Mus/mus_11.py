@@ -201,8 +201,8 @@ class Mus():
         behavior.do_stamp()
         time.sleep(1)
         
-        pibo = cm.tts(bhv="do_suggestion_S", string=f"사진을 찍어 줄게! 곡식 주머니를 들고 브이 해봐!")
-        behavior.do_photo()        
+        # pibo = cm.tts(bhv="do_suggestion_S", string=f"사진을 찍어 줄게! 곡식 주머니를 들고 브이 해봐!")
+        # behavior.do_photo()        
         
         
         # 3. 피드백 수집
@@ -249,9 +249,8 @@ class Mus():
         cwc.writerow(['%Rejections', ])
         cwc.writerow(['%Misrecognitions', ])
 
-        # 5. 활동 완료 기록
-        today_end = datetime.now().strftime('%m%d_%H%M')        
-        gss.write_sheet(name=self.user_name, today=f'end_{today_end}', activities=filename)
+        # 5. 활동 완료 기록      
+        gss.write_sheet(name=self.user_name, today=f'(3)_{today}', activities=filename)
 
 
 if __name__ == "__main__":
